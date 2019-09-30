@@ -272,7 +272,7 @@ if (!defined('CIVICRM_TEMPLATE_COMPILEDIR')) {
  */
 if (!defined('CIVICRM_UF_BASEURL')) {
   if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-    define( 'CIVICRM_UF_BASEURL'      , ($_SERVER['HTTP_HOST']));
+    define( 'CIVICRM_UF_BASEURL'      , 'https://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-civicead8.pantheonsite.io');
   } else {
     define( 'CIVICRM_UF_BASEURL'      , 'http://dev-civicea1.pantheonsite.io/');
   }
