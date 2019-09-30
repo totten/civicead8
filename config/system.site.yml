@@ -1,0 +1,14 @@
+uuid: a0789930-e06e-41b2-be3f-66a9649659c7
+name: civicead8
+mail: chefjeremy@delongaz.com
+slogan: ''
+page:
+  403: ''
+  404: ''
+  front: /node
+admin_compact_mode: false
+weight_select_max: 100
+langcode: en
+default_langcode: en
+_core:
+  default_config_hash: yTxtFqBHnEWxQswuWvkjE8mKw2t8oKuCL1q8KnfHuGE
