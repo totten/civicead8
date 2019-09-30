@@ -1,0 +1,18 @@
+.crm-container h3 {
+  background-color: #ffffff !important;
+  color: #008752 !important;
+}
+
+.crm-container .help {
+background-color: #fff !important;
+border: none !important;
+font-size: 1em !important;
+}
+
+.page-civicrm-event-info #crm-container .event_date_time-section {
+background: #ffffff !important;
+}
+.iCal_links-section {
+background: #ffffff !important;
+}
+

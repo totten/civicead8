@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Provides an Insert View input filter.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\views\Views;
+
+/**
+ * Implements hook_help().
+ */
+function insert_view_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.insert_view':
+      return t('<p>Embed views into nodes using [view:name=display=args] tags.</p>');
+  }
+}
+
+/**
+ * Helper function to replace the tag syntax with the actual view.
+ */
+function _insert_view_substitute_tags($text) {
+  if (preg_match_all("/\[view:([^=\]]+)=?([^=\]]+)?=?([^\]]*)?\]/i", $text, $match)) {
+    $search = $replace = array();
+    foreach ($match[0] as $key => $value) {
+      $view_name = $match[1][$key];
+      $display_id = ($match[2][$key] && !is_numeric($match[2][$key])) ? $match[2][$key] : 'default';
+      $args = $match[3][$key];
+
+      $view_output = insert_view($view_name, $display_id, $args);
+
+      $search[] = $value;
+
+      $replace[] = !empty($view_output) ? render($view_output) : '';
+    }
+    return str_replace($search, $replace, $text);
+  }
+  return $text;
+}
+
+/**
+ * Embed a view using a PHP snippet.
+ *
+ * This function is meant to be called from PHP snippets, should one wish to
+ * embed a view in a node or something. Other than embedding the view it checks
+ * the view access and also allows to use view arguments grabbed from the URL.
+ *
+ * @param $view_name
+ *   The name of the view.
+ * @param $display_id
+ *   The display id to embed. If unsure, use 'default', as it will always be
+ *   valid. But things like 'page' or 'block' should work here.
+ * @param $args
+ *   Additional arguments to send to the view as if they were part of the URL in
+ *   the form of arg1/arg2/arg3. You may use %0, %1, ..., %N to grab arguments
+ *   from the URL.
+ */
+function insert_view($view_name, $display_id = 'default', $args = '') {
+  if (empty($view_name)) {
+    return;
+  }
+
+  $view = Views::getView($view_name);
+
+  if (empty($view)) {
+    return;
+  }
+
+  if (!$view->access($display_id)) {
+    return;
+  }
+
+  $current_path = \Drupal::service('path.current')->getPath();
+  $url_args = explode('/', $current_path);
+  foreach ($url_args as $id => $arg) {
+    $args = str_replace("%$id", $arg, $args);
+  }
+  $args = preg_replace(',/?(%\d),', '', $args);
+  $args = $args ? explode('/', $args) : array();
+
+  return $view->preview($display_id, $args);
+}
+

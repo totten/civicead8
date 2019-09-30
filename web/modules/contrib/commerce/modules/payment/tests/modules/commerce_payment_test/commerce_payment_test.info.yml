@@ -1,0 +1,12 @@
+name: Commerce Payment Test
+description: Provides testing items for Payment
+core: 8.x
+type: module
+dependencies:
+  - commerce:commerce_payment
+  - commerce:commerce_payment_example
+
+# Information added by Drupal.org packaging script on 2019-08-30
+version: '8.x-2.14'
+project: 'commerce'
+datestamp: 1567123389

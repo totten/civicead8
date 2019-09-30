@@ -1,0 +1,20 @@
+name: 'Commerce test theme'
+type: theme
+description: 'Theme for testing commerce email theming'
+core: 8.x
+regions:
+  sidebar_first: 'Left sidebar'
+  sidebar_second: 'Right sidebar'
+  content: Content
+  header: Header
+  footer: Footer
+  highlighted: Highlighted
+  help: Help
+regions_hidden:
+  - sidebar_first
+  - sidebar_second
+
+# Information added by Drupal.org packaging script on 2019-08-30
+version: '8.x-2.14'
+project: 'commerce'
+datestamp: 1567123389

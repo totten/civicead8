@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<extension key="org.ceacisp.sourcecontrib" type="report">
+  <file>sourcecontrib</file>
+  <name>CEA Bookkeeping Report - With Source Contribution Filter</name>
+  <description>With Source Contribution Filter</description>
+  <license>GPL</license>
+  <maintainer>
+    <author>Upleaf</author>
+    <email>ogomez@upleaf.com</email>
+  </maintainer>
+  <releaseDate>2014-04-08</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.4</ver>
+  </compatibility>
+  <comments>Adds the source contribution filter to the bookkeeping report</comments>
+  <civix/>
+  <typeInfo>
+    <component>CiviContribute</component>
+    <reportUrl>org.ceacisp.sourcecontrib</reportUrl>
+  </typeInfo>
+</extension>

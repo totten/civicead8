@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<extension key="nz.co.fuzion.cybersource" type="payment">
+  <file>cybersource</file>
+  <name>Cybersource Payment Extension</name>
+  <downloadUrl>http://github.com/downloads/eileenmcnaughton/nz.co.fuzion.cybersource/nz.co.fuzion.cybersource.zip</downloadUrl>
+  <description>Cybersource Payment Extension</description>
+  <license>AGPL</license>
+  <maintainer>
+    <author>Eileen McNaughton</author>
+    <email>eileen@mcnaughty.com</email>
+  </maintainer>
+  <releaseDate>2012-11-17</releaseDate>
+  <version>1.0</version>
+  <develStage>stable</develStage>
+  <compatibility>
+    <ver>4.1.5</ver>
+  </compatibility>
+  <comments> * @Source code and original idea taken from Jason Yee. Modified, upgraded and fixed by Victor Forsythe 
+ * (support@upleaf.com) for newer versions of civicrm.
+ * www.upleaf.com. Further fixes and 4.2 packaging by Eileen McNaughton commissioned by upleaf.com.
+ In order to use this you will have to generate a signature file (HOP.php) within cybersource. You can discard the file
+ but within if you will find the Merchant ID, Shared Secret and Serial Number to configure the processor
+ Note that the signature authentication provided for by Cybersource has not been implemented. 
+ Cybersource dev docs are : http://apps.cybersource.com/library/documentation/sbc/SOP_UG/html/wwhelp/wwhimpl/js/html/wwhelp.htm#href=app%20C%20-%20samples.html#1014521</comments>
+   <typeInfo>
+    <userNameLabel>Merchant ID</userNameLabel>
+    <passwordLabel>Shared Secret</passwordLabel>
+    <signatureLabel>Serial Number</signatureLabel>
+    <subjectLabel></subjectLabel>
+    <urlSiteDefault></urlSiteDefault>
+    <urlApiDefault></urlApiDefault>
+    <urlRecurDefault></urlRecurDefault>
+    <urlSiteTestDefault>https://orderpagetest.ic3.com/hop/ProcessOrder.do</urlSiteTestDefault>
+    <urlApiTestDefault>/</urlApiTestDefault>
+    <urlRecurTestDefault></urlRecurTestDefault>
+    <urlButtonDefault></urlButtonDefault>
+    <urlButtonTestDefault></urlButtonTestDefault>
+    <billingMode>form</billingMode>
+    <isRecur>0</isRecur>
+    <paymentType>1</paymentType>
+  </typeInfo>
+  <civix>
+    <namespace>CRM/Cybersource</namespace>
+  </civix>
+</extension>

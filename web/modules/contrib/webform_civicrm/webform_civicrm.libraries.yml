@@ -1,0 +1,34 @@
+admin:
+  css:
+    component:
+      css/webform_civicrm_admin.css: {}
+  js:
+    js/webform_civicrm_admin.js: {}
+    # TODO should only be loaded if there is a select list?
+    # @link https://github.com/colemanw/webform_civicrm/blob/8f285b94c4ba444fc894b24f2d23a7c52c92731b/includes/wf_crm_admin_component.inc#L97
+    js/webform_civicrm_options.js: {}
+forms:
+  css:
+    component:
+      css/webform_civicrm_forms.css: {}
+  js:
+    js/webform_civicrm_forms.js: {}
+payment:
+  js:
+    js/webform_civicrm_payment.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - webform_civicrm/forms
+
+civicrm_contact:
+  css:
+    component:
+      css/token-input.css: {}
+  js:
+    # @todo is this a bad assumption? is there a way to load via CiviCRM helpers?
+    /libraries/civicrm/packages/jquery/plugins/jquery.tokeninput.js: {}
+    js/webform_civicrm_contact.js: {}
+  dependencies:
+    - webform_civicrm/forms

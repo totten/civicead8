@@ -23,6 +23,12 @@ $config_directories = array(
   CONFIG_SYNC_DIRECTORY => dirname(DRUPAL_ROOT) . '/config',
 );
 
+# For Migrations, connect to a D7 database.
+$migrate_settings = __DIR__ . "/settings.migrate-on-pantheon.php";
+if (file_exists($migrate_settings)) {
+    include $migrate_settings;
+}
+
 /**
  * If there is a local settings file, then include it
  */

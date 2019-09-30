@@ -1,0 +1,15 @@
+civicrm_entity.admin:
+  path: '/admin/structure/civicrm-entity'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'CiviCRM Entity'
+  requirements:
+    _permission: 'administer civicrm entity'
+
+civicrm_entity.settings:
+  path: '/admin/structure/civicrm-entity/settings'
+  defaults:
+    _form: '\Drupal\civicrm_entity\Form\CivicrmEntitySettings'
+    _title: 'Settings'
+  requirements:
+    _permission: 'administer civicrm entity'

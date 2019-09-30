@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<extension key="biz.jmaconsulting.printgrantpdfs" type="module">
+  <file>printgrantpdfs</file>
+  <name>Print Grants as PDF</name>
+  <description>Enhances the print grants to include custom fields and attachments while generating PDFs</description>
+  <downloadUrl>https://github.com/JMAConsulting/biz.jmaconsulting.printgrantpdfs/archive/v1.1.zip</downloadUrl>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>JMA Consulting</author>
+    <email>joe.murray@jmaconsulting.biz</email>
+  </maintainer>
+  <urls>
+    <url desc="Support">https://github.com/JMAConsulting/biz.jmaconsulting.printgrantpdfs/issues?state=open</url>
+    <url desc="Installation Instructions for 1.1">https://github.com/JMAConsulting/biz.jmaconsulting.printgrantpdfs/blob/1.0/README.md</url>
+    <url desc="Documentation">https://github.com/JMAConsulting/biz.jmaconsulting.printgrantpdfs/blob/1.0/README.md</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2015-04-17</releaseDate>
+  <version>1.1</version>
+  <develStage>stable</develStage>
+  <compatibility>
+    <ver>4.5</ver>
+    <ver>4.6</ver>
+  </compatibility>
+  <comments>This extension supports printing Grants to PDFs for download. Custom fields and attached files are included in the PDF. Printing Word documents attachments depends on the unoconv library from LibreOffice, which requires about half of LibreOffice to be installed.</comments>
+  <civix>
+    <namespace>CRM/Printgrantpdfs</namespace>
+  </civix>
+</extension>
