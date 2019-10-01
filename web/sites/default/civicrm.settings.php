@@ -5,22 +5,34 @@
 * Populate needed variables based on the Pantheon environment.
 */
 
+// This is the only variable in this file that should need to change between pantheon/civi sites.
+$siteName = '-civicead8.pantheonsite.io';
+
+// This assumes https.
+$pantheonDomain = '//' . $_ENV['PANTHEON_ENVIRONMENT'] . $siteName;
+
 // All Pantheon Environments.
 if (defined('PANTHEON_ENVIRONMENT')) {
   // Extract Pressflow settings into a php object.
   $pressflow_settings = json_decode($_SERVER['PRESSFLOW_SETTINGS']);
-  // var_dump($pressflow_settings);
+// var_dump($pressflow_settings);
 // Drupal Root Info
   $pantheon_conf = $pressflow_settings->conf;
   $pantheon_root_dir = "/srv/bindings/" . $pantheon_conf->pantheon_binding;
-  $webRoot = $pantheon_root_dir . '/code/web/';
-  $publicFileDir =   $webRoot . $pantheon_conf->file_directory_path;
+  $webRoot = $pantheon_root_dir . '/code/web';
+  $fileRoot = $pantheon_root_dir . '/files';
+  //$publicFileDir =   $webRoot . $pantheon_conf->file_directory_path;
 
   // DB Info
   $pantheon_db = $pressflow_settings->databases->default->default;
   $pantheon_db_string = $pantheon_db->driver . "://" . $pantheon_db->username . ":";
   $pantheon_db_string .= $pantheon_db->password . "@" . $pantheon_db->host . ":";
   $pantheon_db_string .= $pantheon_db->port . "/" . $pantheon_db->database . "?new_link=true";
+
+  // Redis info.
+  $redHost = $pantheon_conf->redis_client_host ;
+  $redPass = $pantheon_conf->redis_client_password;
+  $redPort = $pantheon_conf->redis_client_port;
 
 }
 
@@ -168,60 +180,13 @@ if (!defined('CIVICRM_LOGGING_DSN')) {
   define('CIVICRM_LOGGING_DSN', CIVICRM_DSN);
 }
 
-/**
- * File System Paths:
- *
- * $civicrm_root is the file system path on your server where the civicrm
- * code is installed. Use an ABSOLUTE path (not a RELATIVE path) for this setting.
- *
- * CIVICRM_TEMPLATE_COMPILEDIR is the file system path where compiled templates are stored.
- * These sub-directories and files are temporary caches and will be recreated automatically
- * if deleted.
- *
- * IMPORTANT: The COMPILEDIR directory must exist,
- * and your web server must have read/write access to these directories.
- *
- *
- * EXAMPLE - Drupal:
- * If the path to the Drupal home directory is /var/www/htdocs/drupal
- * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/drupal/sites/all/modules/civicrm/';
- *
- * the CIVICRM_TEMPLATE_COMPILEDIR would be:
- *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/drupal/sites/default/files/civicrm/templates_c/');
- *
- * EXAMPLE - Backdrop CMS:
- * If the path to the Backdrop home directory is /var/www/htdocs/backdrop
- * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/backdrop/modules/civicrm/';
- *
- * the CIVICRM_TEMPLATE_COMPILEDIR would be:
- *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/backdrop/files/civicrm/templates_c/');
- *
- * EXAMPLE - Joomla Installations:
- * If the path to the Joomla home directory is /var/www/htdocs/joomla
- * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/joomla/administrator/components/com_civicrm/civicrm/';
- *
- * the CIVICRM_TEMPLATE_COMPILEDIR would be:
- *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/joomla/media/civicrm/templates_c/');
- *
- * EXAMPLE - WordPress Installations:
- * If the path to the WordPress home directory is /var/www/htdocs/wordpress and the path to the plugin directory is /var/www/htdocs/wordpress/wp-content/plugins
- * the $civicrm_root setting would be:
- *      $civicrm_root = '/var/www/htdocs/wordpress/wp-content/plugins/civicrm/civicrm/';
- *
- * the CIVICRM_TEMPLATE_COMPILEDIR would be:
- *      define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/var/www/htdocs/wordpress/wp-content/uploads/civicrm/templates_c/');
- *
- */
 
 global $civicrm_root;
 
 // $civicrm_root = '/app/vendor/civicrm/civicrm-core';
 $civicrm_root = $pantheon_root_dir . "/code/vendor/civicrm/civicrm-core";
 if (!defined('CIVICRM_TEMPLATE_COMPILEDIR')) {
-  define('CIVICRM_TEMPLATE_COMPILEDIR', $webRoot . $pantheon_conf->file_directory_path . '/civicrm/templates_c/');
+  define('CIVICRM_TEMPLATE_COMPILEDIR', $fileRoot . '/civicrm/templates_c/');
   // define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/app/web/sites/default/files/civicrm/templates_c/');
 }
 
@@ -240,45 +205,13 @@ if (!defined('CIVICRM_TEMPLATE_COMPILEDIR')) {
 //  define( 'CIVICRM_TEMPLATE_COMPILE_CHECK', FALSE);
 //}
 
-/**
- * Site URLs:
- *
- * This section defines absolute and relative URLs to access the host CMS (Backdrop, Drupal, or Joomla) resources.
- *
- * IMPORTANT: Trailing slashes should be used on all URL settings.
- *
- *
- * EXAMPLE - Drupal Installations:
- * If your site's home url is http://www.example.com/drupal/
- * these variables would be set as below. Modify as needed for your install.
- *
- * CIVICRM_UF_BASEURL - home URL for your site:
- *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/drupal/');
- *
- * EXAMPLE - Backdrop CMS Installations:
- * If your site's home url is http://www.example.com/backdrop/
- * these variables would be set as below. Modify as needed for your install.
- *
- * CIVICRM_UF_BASEURL - home URL for your site:
- *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/backdrop/');
- *
- * EXAMPLE - Joomla Installations:
- * If your site's home url is http://www.example.com/joomla/
- *
- * CIVICRM_UF_BASEURL - home URL for your site:
- * Administration site:
- *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/joomla/administrator/');
- * Front-end site:
- *      define( 'CIVICRM_UF_BASEURL' , 'http://www.example.com/joomla/');
- *
- */
+
 if (!defined('CIVICRM_UF_BASEURL')) {
   if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
-    define( 'CIVICRM_UF_BASEURL'      , 'https://' . $_ENV['PANTHEON_ENVIRONMENT'] . '-civicead8.pantheonsite.io');
+    define( 'CIVICRM_UF_BASEURL'      , $pantheonDomain);
   } else {
     define( 'CIVICRM_UF_BASEURL'      , 'http://dev-civicea1.pantheonsite.io/');
   }
-  //define( 'CIVICRM_UF_BASEURL'      , 'http://dev-civicea1.pantheonsite.io/');
 }
 
 /**
@@ -291,19 +224,19 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  $civicrm_setting['Directory Preferences']['uploadDir'] = $pantheon_conf->file_temporary_path;
 
  // Override the custom files upload directory.
- $civicrm_setting['Directory Preferences']['customFileUploadDir'] = $publicFileDir . '/custom';
+ $civicrm_setting['Directory Preferences']['customFileUploadDir'] = $fileRoot . '/civicrm/custom/';
 
  // Override the images directory.
- $civicrm_setting['Directory Preferences']['imageUploadDir'] = $publicFileDir . '/persist/contribute' ;
+ $civicrm_setting['Directory Preferences']['imageUploadDir'] = $fileRoot . '/civicrm/persist/contribute/' ;
 
  // Override the custom templates directory.
- $civicrm_setting['Directory Preferences']['customTemplateDir'] = $publicFileDir . '/custom_tpl_47';
+ $civicrm_setting['Directory Preferences']['customTemplateDir'] = $fileRoot . '/civicrm/custom_tpl_47/';
 
  // Override the Custom php path directory.
- $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $publicFileDir . '/custom_php';
+ $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $fileRoot . '/civicrm/custom_php/';
 
  // Override the extensions directory.
- $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . 'extensions';
+ $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . 'extensions/';
 
  // Override the resource url
  // $civicrm_setting['URL Preferences']['userFrameworkResourceURL'] = 'http://example.com/example-resource-url/';
@@ -413,7 +346,11 @@ if (!defined('CIVICRM_DOMAIN_ID')) {
  *
  */
 if (!defined('CIVICRM_DB_CACHE_CLASS')) {
+  if (isset($_ENV['PANTHEON_ENVIRONMENT'])) {
+    define('CIVICRM_DB_CACHE_CLASS', 'Redis');
+  } else {
   define('CIVICRM_DB_CACHE_CLASS', 'ArrayCache');
+  }
 }
 
 /**
@@ -421,7 +358,11 @@ if (!defined('CIVICRM_DB_CACHE_CLASS')) {
  * same machine (Unix).
  */
 if (!defined('CIVICRM_DB_CACHE_HOST')) {
-  define('CIVICRM_DB_CACHE_HOST', 'localhost');
+  if (CIVICRM_DB_CACHE_CLASS === 'Redis') {
+    define('CIVICRM_DB_CACHE_HOST', $redHost);
+  } else {
+    define('CIVICRM_DB_CACHE_HOST', '');
+  }
 }
 
 /**
@@ -431,9 +372,8 @@ if (!defined('CIVICRM_DB_CACHE_HOST')) {
  */
 if (!defined('CIVICRM_DB_CACHE_PORT')) {
   if (CIVICRM_DB_CACHE_CLASS === 'Redis') {
-    define('CIVICRM_DB_CACHE_PORT', 6379 );
-  }
-  else {
+    define('CIVICRM_DB_CACHE_PORT', $redPort);
+  } else {
     define('CIVICRM_DB_CACHE_PORT', 11211);
   }
 }
@@ -443,7 +383,11 @@ if (!defined('CIVICRM_DB_CACHE_PORT')) {
  * with Redis)
  */
 if (!defined('CIVICRM_DB_CACHE_PASSWORD')) {
-  define('CIVICRM_DB_CACHE_PASSWORD', '' );
+  if (CIVICRM_DB_CACHE_CLASS === 'Redis') {
+    define('CIVICRM_DB_CACHE_PASSWORD', $redPass );
+  } else {
+    define('CIVICRM_DB_CACHE_PASSWORD', '' );
+  }
 }
 
 /**

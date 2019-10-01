@@ -6015,6 +6015,67 @@
         }
     },
     {
+        "name": "drupal/redis",
+        "version": "1.2.0",
+        "version_normalized": "1.2.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/redis.git",
+            "reference": "8.x-1.2"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/redis-8.x-1.2.zip",
+            "reference": "8.x-1.2",
+            "shasum": "6b8847a0816a6e400d495aed1e9dde4c594d6e2b"
+        },
+        "require": {
+            "drupal/core": "~8.0"
+        },
+        "suggest": {
+            "predis/predis": "^1.1.1"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "branch-alias": {
+                "dev-1.x": "1.x-dev"
+            },
+            "drupal": {
+                "version": "8.x-1.2",
+                "datestamp": "1568275684",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Drupal\\redis\\": "src"
+            }
+        },
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Berdir",
+                "homepage": "https://www.drupal.org/user/214652"
+            },
+            {
+                "name": "pounard",
+                "homepage": "https://www.drupal.org/user/240164"
+            }
+        ],
+        "description": "Provide a module placeholder, for using as dependency for module that needs Redis.",
+        "homepage": "https://www.drupal.org/project/redis",
+        "support": {
+            "source": "https://git.drupalcode.org/project/redis"
+        }
+    },
+    {
         "name": "drupal/simple_block",
         "version": "1.0.0-beta1",
         "version_normalized": "1.0.0.0-beta1",
