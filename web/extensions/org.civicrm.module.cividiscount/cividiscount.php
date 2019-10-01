@@ -1,6 +1,7 @@
 <?php
 
 require_once 'cividiscount.civix.php';
+use CRM_CiviDiscount_ExtensionUtil as E;
 
 /**
  * Implements hook_civicrm_install().
@@ -21,15 +22,6 @@ function cividiscount_civicrm_uninstall() {
  */
 function cividiscount_civicrm_config(&$config) {
   _cividiscount_civix_civicrm_config($config);
-}
-
-/**
- * Implements hook_civicrm_perm().
- *
- * Module extensions dont implement this hook as yet, will need to add for 4.2
- */
-function cividiscount_civicrm_perm() {
-  return array('view CiviDiscount', 'administer CiviDiscount');
 }
 
 /**
@@ -79,30 +71,33 @@ function cividiscount_civicrm_managed(&$entities) {
 }
 
 /**
- * Implementation of hook_civicrm_tabs()
+ * Implementation of hook_civicrm_tabset()
  *
  * Display a discounts tab listing discount code usage for that contact.
  */
-function cividiscount_civicrm_tabs(&$tabs, $cid) {
-  if (_cividiscount_is_org($cid)) {
-    $count = _cividiscount_get_tracking_count_by_org($cid);
+function cividiscount_civicrm_tabset($path, &$tabs, $context) {
+  if ($path === 'civicrm/contact/view') {
+    $cid = $context['contact_id'];
+    if (_cividiscount_is_org($cid)) {
+      $tabs[] = array(
+        'id' => 'discounts_assigned',
+        'count' => _cividiscount_get_tracking_count_by_org($cid),
+        'title' => E::ts('Codes Assigned'),
+        'weight' => 115,
+        'icon' => 'crm-i fa-qrcode',
+        'url' => CRM_Utils_System::url('civicrm/cividiscount/usage', "reset=1&oid={$cid}", FALSE, NULL, FALSE),
+      );
+    }
+
     $tabs[] = array(
       'id' => 'discounts',
-      'count' => $count,
-      'title' => ts('Codes Assigned'),
-      'weight' => '98',
-      'url' => CRM_Utils_System::url('civicrm/cividiscount/usage', "reset=1&oid={$cid}", false, null, false),
+      'count' => _cividiscount_get_tracking_count($cid),
+      'title' => E::ts('Codes Redeemed'),
+      'weight' => 116,
+      'icon' => 'crm-i fa-qrcode',
+      'url' => CRM_Utils_System::url('civicrm/cividiscount/usage', "reset=1&cid={$cid}", FALSE, NULL, FALSE),
     );
   }
-
-  $count = _cividiscount_get_tracking_count($cid);
-  $tabs[] = array(
-    'id' => 'discounts',
-    'count' => $count,
-    'title' => ts('Codes Redeemed'),
-    'weight' => '99',
-    'url' => CRM_Utils_System::url('civicrm/cividiscount/usage', "reset=1&cid={$cid}", false, null, false),
-  );
 }
 
 /**
@@ -238,7 +233,7 @@ function cividiscount_civicrm_validateForm($name, &$fields, &$files, &$form, &$e
   if ((!$discountInfo || !$discountInfo['autodiscount']) && trim($code) != '') {
 
     if (!$discountInfo) {
-      $errors['discountcode'] = ts('The discount code you entered is invalid.');
+      $errors['discountcode'] = E::ts('The discount code you entered is invalid.');
       return;
     }
 
@@ -252,7 +247,7 @@ function cividiscount_civicrm_validateForm($name, &$fields, &$files, &$form, &$e
         $apcount += $sv['additional_participants'];
       }
       if (($discount['count_use'] + $apcount) > $discount['count_max']) {
-        $errors['discountcode'] = ts('There are not enough uses remaining for this code.');
+        $errors['discountcode'] = E::ts('There are not enough uses remaining for this code.');
       }
     }
   }
@@ -340,7 +335,7 @@ function cividiscount_civicrm_buildAmount($pageType, &$form, &$amounts) {
     $discounts = $discountCalculator->getDiscounts();
 
      if (!empty($code) && empty($discounts)) {
-       $form->set( 'discountCodeErrorMsg', ts('The discount code you entered is invalid.'));
+       $form->set( 'discountCodeErrorMsg', E::ts('The discount code you entered is invalid.'));
     }
 
     // here we check if discount is configured for events or for membership types.
@@ -411,7 +406,7 @@ function cividiscount_civicrm_buildAmount($pageType, &$form, &$amounts) {
           foreach ($fee['options'] as $option_id => &$option) {
             if (!empty($applyToAllLineItems) || CRM_Utils_Array::value($option['id'], $priceFields)) {
               $originalLabel = $originalAmounts[$fee_id]['options'][$option_id]['label'];
-              $originalAmount = CRM_Utils_Rule::cleanMoney($originalAmounts[$fee_id]['options'][$option_id]['amount']);
+              $originalAmount = (float) $originalAmounts[$fee_id]['options'][$option_id]['amount'];
               list($amount, $label) =
                 _cividiscount_calc_discount($originalAmount, $originalLabel, $discount, $autodiscount, $currency);
               $discountAmount = $originalAmounts[$fee_id]['options'][$option_id]['amount'] - $amount;
@@ -419,6 +414,8 @@ function cividiscount_civicrm_buildAmount($pageType, &$form, &$amounts) {
                 $option['amount'] = $amount;
                 $option['label'] = $label;
                 $option['discount_applied'] = $discountAmount;
+                $option['discount_code'] = $discount['code'];
+                $option['discount_description'] = $discount['description'];
                 /*
                 * Priyanka Karan @ Veda NFP Consulting Ltd
                 * Re-calculate VAT/Sales TAX on discounted amount.
@@ -432,15 +429,19 @@ function cividiscount_civicrm_buildAmount($pageType, &$form, &$amounts) {
                   }
                 }
               }
+              $appliedDiscountID = $discountID;
               $discountApplied = TRUE;
             }
           }
         }
       }
+      if ($autodiscount) {
+        break;
+      }
     }
 
     // Display discount message if one is available
-    if ($pageType == 'event') {
+    if ($pageType == 'event' && !$autodiscount) {
       foreach ($discounts as $code => $discount) {
         if (isset($discount['events']) && array_key_exists($eid, $discount['events']) &&
           $discount['discount_msg_enabled'] && (!isset($discountApplied) || !$discountApplied) && !empty($discount['autodiscount'])) {
@@ -449,15 +450,14 @@ function cividiscount_civicrm_buildAmount($pageType, &$form, &$amounts) {
       }
     }
 
-    // this seems to incorrectly set to only the last discount but it seems not to matter in the way it is used
-    if (isset($discountApplied) && $discountApplied) {
+    if (isset($discountApplied) && $discountApplied && !empty($discounts[$appliedDiscountID])) {
       if (!empty($ps['fields'])) {
         $ps['fields'] = $amounts;
         $form->setVar('_priceSet', $ps);
       }
 
       $form->set('_discountInfo', array(
-        'discount' => $discount,
+        'discount' => $discounts[$appliedDiscountID],
         'autodiscount' => $autodiscount,
         'contact_id' => $contact_id,
       ));
@@ -497,7 +497,7 @@ function _cividiscount_checkEventDiscountMultipleParticipants($pageType, &$form,
         $apcount += $sv['additional_participants'];
       }
       if (($discount['count_use'] + $apcount) > $discount['count_max']) {
-        $form->set('discountCodeErrorMsg', ts('There are not enough uses remaining for this code.'));
+        $form->set('discountCodeErrorMsg', E::ts('There are not enough uses remaining for this code.'));
         return FALSE;
       }
     }
@@ -580,11 +580,12 @@ function cividiscount_civicrm_membershipTypeValues(&$form, &$membershipTypeValue
   $form->set('_discountInfo', NULL);
   $code = CRM_Utils_Request::retrieve('discountcode', 'String', $form, false, null, 'REQUEST');
   $discountCalculator = new CRM_CiviDiscount_DiscountCalculator('membership_type', NULL, $contact_id, $code, FALSE);
-  if (!empty($code)) {
-    $discounts = $discountCalculator->getDiscounts();
+  $discounts = $discountCalculator->getDiscounts();
+  if (empty($code)) {
+    $discounts = $discountCalculator->autoDiscounts;
   }
   if(!empty($code) && empty($discounts)) {
-    $form->set( 'discountCodeErrorMsg', ts('The discount code you entered is invalid.'));
+    $form->set( 'discountCodeErrorMsg', E::ts('The discount code you entered is invalid.'));
   }
   if (empty($discounts)) {
     return;
@@ -595,6 +596,14 @@ function cividiscount_civicrm_membershipTypeValues(&$form, &$membershipTypeValue
       list($value, $label) = _cividiscount_calc_discount($values['minimum_fee'], $values['name'], $discount, $discountCalculator->isAutoDiscount());
       $values['minimum_fee'] = $value;
       $values['name'] = $label;
+	  
+	  // set total amount to be same as the calculated discount
+	  // this will overwrite the submitted total amount
+	  if (!empty($form->_submitValues['membership_type_id'])) {
+        if ($values['member_of_contact_id'] == $form->_submitValues['membership_type_id'][0] && $values['id'] == $form->_submitValues['membership_type_id'][1]) {
+          $form->_submitValues['total_amount'] = $value;
+        }
+      }
     }
   }
 
@@ -893,7 +902,7 @@ function _cividiscount_filter_membership_discounts($discounts, $membershipTypeVa
  * Calculate either a monetary or percentage discount.
  */
 function _cividiscount_calc_discount($amount, $label, $discount, $autodiscount, $currency = 'USD') {
-  $title = $autodiscount ? ts('Includes automatic member discount of') : ts('Includes applied discount code %1', array(1 => $discount['code']));
+  $title = $autodiscount ? E::ts('Includes automatic member discount of') : E::ts('Includes applied discount code %1', array(1 => $discount['code']));
   if ($discount['amount_type'] == '2') {
     $newamount = CRM_Utils_Rule::cleanMoney($amount) - CRM_Utils_Rule::cleanMoney($discount['amount']);
     $fmt_discount = CRM_Utils_Money::format($discount['amount'], $currency);
@@ -1042,14 +1051,14 @@ function _cividiscount_add_discount_textfield(&$form) {
     _cividiscount_add_button_before_priceSet($form);
     return;
   }
-  $form->addElement('text', 'discountcode', ts('If you have a discount code, enter it here'));
+  $form->addElement('text', 'discountcode', E::ts('If you have a discount code, enter it here'));
   $errorMessage = $form->get('discountCodeErrorMsg');
   if ($errorMessage) {
     $form->setElementError('discountcode', $errorMessage);
   }
   $form->set('discountCodeErrorMsg', null);
   $buttonName = $form->getButtonName('reload');
-  $form->addElement('submit', $buttonName, ts('Apply'), array('formnovalidate' => 1));
+  $form->addElement('submit', $buttonName, E::ts('Apply'), array('formnovalidate' => 1));
   $template = CRM_Core_Smarty::singleton();
   $bhfe = $template->get_template_vars('beginHookFormElements');
   if (!$bhfe) {
@@ -1100,7 +1109,7 @@ function _cividiscount_add_button_before_priceSet(&$form) {
   $form->add(
     'text',
     'discountcode',
-    ts('If you have a discount code, enter it here'),
+    E::ts('If you have a discount code, enter it here'),
     array('class' => 'description')
   );
   $errorMessage = $form->get('discountCodeErrorMsg');
@@ -1109,7 +1118,7 @@ function _cividiscount_add_button_before_priceSet(&$form) {
   }
   $form->set('discountCodeErrorMsg', null);
   $buttonName = $form->getButtonName('reload');
-  $form->addElement('submit', $buttonName, ts('Apply'), array('formnovalidate' => 1));
+  $form->addElement('submit', $buttonName, E::ts('Apply'), array('formnovalidate' => 1));
   $form->assign('discountElements', array(
     'discountcode',
     $buttonName
@@ -1136,10 +1145,14 @@ function _cividiscount_version_at_least($version) {
  */
 function cividiscount_civicrm_navigationMenu( &$params ) {
   // get the id of Administer Menu
-  $administerMenuId = CRM_Core_DAO::getFieldValue('CRM_Core_BAO_Navigation', 'Administer', 'id', 'name');
+  foreach($params as $key => $item) {
+  	if (isset($item['attributes']['name']) && $item['attributes']['name'] === 'Administer') {
+  	  $administerMenuId = $item['attributes']['navID'];
+  	}
+  }
 
   // skip adding menu if there is no administer menu
-  if ($administerMenuId) {
+  if (!empty($administerMenuId)) {
     // get the maximum key under adminster menu
     $maxKey = max( array_keys($params[$administerMenuId]['child']));
     $params[$administerMenuId]['child'][$maxKey+1] =  array (
@@ -1155,6 +1168,16 @@ function cividiscount_civicrm_navigationMenu( &$params ) {
         'active'     => 1
       )
     );
+  }
+  foreach (array('Events', 'Contributions') as $header) {
+    _cividiscount_civix_insert_navigation_menu($params, $header, array(
+      'label' => E::ts('CiviDiscount'),
+      'name' => 'CiviDiscount',
+      'url' => 'civicrm/cividiscount',
+      'permission' => 'administer CiviCRM,administer CiviDiscount',
+      'operator' => 'OR',
+      'separator' => 2,
+    ));
   }
 }
 
@@ -1173,4 +1196,10 @@ function cividiscount_civicrm_entityTypes(&$entityTypes) {
     'table' => 'cividiscount_track'
   );
 
+}
+
+function cividiscount_civicrm_permission(&$permissions) {
+  $permissions += array(
+    'administer CiviDiscount' => E::ts('administer CiviDiscount'),
+  );
 }

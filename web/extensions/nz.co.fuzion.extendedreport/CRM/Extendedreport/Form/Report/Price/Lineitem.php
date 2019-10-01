@@ -30,7 +30,6 @@
  *
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2011
- * $Id$
  */
 class CRM_Extendedreport_Form_Report_Price_Lineitem extends CRM_Extendedreport_Form_Report_ExtendedReport {
 
@@ -46,12 +45,18 @@ class CRM_Extendedreport_Form_Report_Price_Lineitem extends CRM_Extendedreport_F
   public function __construct() {
     $this->_columns
       = $this->getColumns('Contact', array('order_by' => TRUE))
+      + $this->getColumns('Email', [
+          'fields' => TRUE,
+          'order_by' => FALSE,
+        ]
+      )
       + $this->getColumns('Event')
       + $this->getColumns('Participant')
       + $this->getColumns('Contribution', array('order_by' => TRUE))
       + $this->getColumns('PriceField', array('order_by' => TRUE))
       + $this->getColumns('PriceFieldValue' , array('order_by' => TRUE))
       + $this->getColumns('LineItem', array('order_by' => TRUE, 'fields_defaults' => array('financial_type_id', 'line_total'))) +
+      $this->getColumns('BillingAddress') +
       $this->getColumns('Address');
     parent::__construct();
   }
@@ -80,6 +85,8 @@ class CRM_Extendedreport_Form_Report_Price_Lineitem extends CRM_Extendedreport_F
       'contact_from_contribution',
       'event_from_participant',
       'address_from_contact',
+      'address_from_contribution',
+	    'email_from_contact',
     );
 
   }

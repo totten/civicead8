@@ -14,6 +14,7 @@ class CRM_Extendedreport_Form_Report_Event_EventPivot extends CRM_Extendedreport
   public $_drilldownReport = array('event/participantlist' => 'Link to Participants');
   protected $_participantTable = 'civicrm_participant';
   protected $_noFields = TRUE;
+  protected $_customGroupExtends = ['Participant', 'Event', 'Contact', 'Individual', 'Household', 'Organization'];
   protected $_potentialCriteria = array(
     'rid',
     'sid',
@@ -44,13 +45,6 @@ class CRM_Extendedreport_Form_Report_Event_EventPivot extends CRM_Extendedreport
     $this->_columns['civicrm_event']['fields']['id']['alter_display'] = 'alterEventID';
     $this->_columns['civicrm_event']['fields']['id']['title'] = 'Event';
 
-    $this->_aggregateRowFields = array(
-      'event:id' => 'Event',
-    );
-
-    $this->_aggregateColumnHeaderFields = array(
-      'participant:status_id' => ts('Participant Status'),
-    );
     $this->_groupFilter = TRUE;
     parent::__construct();
   }
@@ -66,4 +60,5 @@ class CRM_Extendedreport_Form_Report_Event_EventPivot extends CRM_Extendedreport
       'contact_from_participant',
     );
   }
+
 }

@@ -16,16 +16,12 @@ class CRM_Extendedreport_Form_Report_Case_CasePivot extends CRM_Extendedreport_F
   protected $_potentialCriteria = array();
   protected $isPivot = TRUE;
   protected $_noFields = TRUE;
+  protected $_customGroupExtends = ['Case'];
 
   /**
    * Class constructor.
    */
   public function __construct() {
-    $this->_customGroupExtended['civicrm_case'] = array(
-      'extends' => array('Case'),
-      'filters' => TRUE,
-      'title' => ts('Case'),
-    );
 
     $this->_columns = $this->getColumns('Case', array(
           'fields' => FALSE,
@@ -39,15 +35,21 @@ class CRM_Extendedreport_Form_Report_Case_CasePivot extends CRM_Extendedreport_F
     $this->_columns['civicrm_case']['fields']['case_civireport_status_id']['no_display'] = TRUE;
     $this->_columns['civicrm_case']['filters']['case_civireport_is_deleted']['default'] = 0;
 
-    $this->_aggregateRowFields = array(
-      'case_civireport:id' => 'Case',
-      'case_civireport:status_id' => 'Case Status',
-      'civicrm_contact:gender_id' => 'Gender',
+    $this->_columns['civicrm_case']['metadata']['case_civireport_id'] = array_merge(
+      ['is_fields' => FALSE, 'is_filters' => FALSE, 'is_group_bys' => FALSE, 'is_order_bys' => FALSE, 'is_join_filters' => FALSE, 'is_aggregate_columns' => FALSE],
+      $this->_columns['civicrm_case']['fields']['case_civireport_id']
     );
-    $this->_aggregateColumnHeaderFields = array(
-      'civicrm_contact:gender_id' => 'Gender',
-      'case_civireport:status_id' => 'Case Status',
+    $this->_columns['civicrm_case']['metadata']['case_civireport_status_id'] = array_merge(
+      ['is_fields' => FALSE, 'is_filters' => FALSE, 'is_group_bys' => FALSE, 'is_order_bys' => FALSE, 'is_join_filters' => FALSE,
+        'is_aggregate_columns' => TRUE],
+      $this->_columns['civicrm_case']['fields']['case_civireport_status_id']
     );
+    $this->_columns['civicrm_case']['metadata']['case_civireport_is_deleted'] = array_merge(
+      ['is_fields' => FALSE, 'is_filters' => FALSE, 'is_group_bys' => FALSE, 'is_order_bys' => FALSE, 'is_join_filters' => FALSE,
+        'is_aggregate_columns' => FALSE],
+      $this->_columns['civicrm_case']['filters']['case_civireport_is_deleted']
+    );
+
     $this->_tagFilter = TRUE;
     $this->_groupFilter = TRUE;
     parent::__construct();

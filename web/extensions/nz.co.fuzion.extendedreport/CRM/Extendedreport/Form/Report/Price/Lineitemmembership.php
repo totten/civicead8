@@ -3,17 +3,21 @@
  * Class CRM_Extendedreport_Form_Report_Price_Lineitemmembership
  */
 class CRM_Extendedreport_Form_Report_Price_Lineitemmembership extends CRM_Extendedreport_Form_Report_ExtendedReport {
-  protected $_addressField = FALSE;
-
-  protected $_emailField = FALSE;
-
-  protected $_summary = NULL;
 
   protected $_customGroupExtends = array('Membership', 'Individual', 'Contact');
 
   protected $_baseTable = 'civicrm_line_item';
 
   protected $_aclTable = 'civicrm_contact';
+
+  protected $isSupportsContactTab = TRUE;
+
+  /**
+   * Support contact tabs by specifying which filter to map the contact id field to.
+   *
+   * @var string
+   */
+  protected $contactIDField = 'membership_contact_id';
 
   /**
    * Class constructor.
@@ -44,6 +48,7 @@ class CRM_Extendedreport_Form_Report_Price_Lineitemmembership extends CRM_Extend
       'membership_from_lineItem',
       'contact_from_membership',
       'address_from_contact',
+      'contribution_from_lineItem',
     );
   }
 

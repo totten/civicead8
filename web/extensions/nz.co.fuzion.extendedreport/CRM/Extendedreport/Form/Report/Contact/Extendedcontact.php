@@ -12,21 +12,18 @@ class CRM_Extendedreport_Form_Report_Contact_Extendedcontact extends CRM_Extende
   protected $_customGroupAggregates = TRUE;
   protected $isPivot = TRUE;
   protected $_noFields = TRUE;
-
+  protected $_customGroupExtends = ['Contact', 'Individual', 'Household', 'Organization'];
 
   /**
    * Class constructor.
    */
   public function __construct() {
-    $this->_columns = $this->getColumns('Contact', array(
+    $this->_columns = $this->getColumns('Contact', [
         'fields' => FALSE,
         'order_by' => FALSE,
-      )
+      ]
     );
     $this->_columns['civicrm_contact']['fields']['id']['required'] = TRUE;
-    $this->_aggregateColumnHeaderFields = array(
-      'civicrm_contact_civireport:gender_id' => 'Gender',
-    );
     parent::__construct();
   }
 }

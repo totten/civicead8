@@ -26,19 +26,36 @@ class CRM_Extendedreport_Form_Report_Pledge_PaidAndCommitted extends CRM_Extende
           'order_by' => TRUE,
         )
       ) + $this->getColumns('Contact')
-      + $this->getColumns('FinancialType');
+      + $this->getColumns('FinancialType')
+      + $this->buildColumns([
+        'actual_amount' => [
+          'title' => ts('Amount Paid'),
+          'statistics' => array('sum' => ts('Amount Paid')),
+          'type' => CRM_Utils_Type::T_MONEY,
+          'is_fields' => TRUE,
+          'is_filters' => FALSE,
+          'is_join_filters' => FALSE,
+          'is_group_bys' => FALSE,
+          'is_order_bys' => FALSE,
+          'is_aggregate_columns' => FALSE,
+          'is_aggregate_rows' => FALSE,
+        ]
+      ],
+    'civicrm_pledge_payment');
 
-    $this->_columns['civicrm_pledge_payment']['fields']['actual_amount'] = array(
-      'title' => ts('Amount Paid'),
-      'statistics' => array('sum' => ts('Amount Paid')),
-      'type' => CRM_Utils_Type::T_MONEY,
-    );
     $this->_columns += $this->getColumns('Pledge', array('fields' => TRUE));
 
     $this->_columns['civicrm_pledge']['metadata']['balance_amount'] = array(
       'title' => 'Balance to Pay',
       'type' => CRM_Utils_Type::T_MONEY,
       'dbAlias' => "(COALESCE(sum(pledge.amount), 0) - COALESCE(sum(pledge_payment_civireport.actual_amount), 0))",
+      'is_fields' => TRUE,
+      'is_filters' => FALSE,
+      'is_join_filters' => FALSE,
+      'is_group_bys' => TRUE,
+      'is_order_bys' => FALSE,
+      'is_aggregate_columns' => FALSE,
+      'is_aggregate_rows' => FALSE,
     );
 
     $this->_columns['civicrm_pledge']['fields']['balance_amount'] = array(
@@ -55,6 +72,7 @@ class CRM_Extendedreport_Form_Report_Pledge_PaidAndCommitted extends CRM_Extende
     $this->_groupFilter = TRUE;
     $this->_tagFilter = TRUE;
     parent::__construct();
+    CRM_Core_DAO::disableFullGroupByMode();
   }
 
   function from() {

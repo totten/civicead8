@@ -34,14 +34,9 @@ class ContributionDetailExtendedTest extends BaseTestClass implements HeadlessIn
 
   public function setUp() {
     parent::setUp();
-    $components = array();
-    $dao = new CRM_Core_DAO_Component();
-    while ($dao->fetch()) {
-      $components[$dao->id] = $dao->name;
-    }
-    civicrm_api3('Setting', 'create', array('enable_components' => $components));
-    $contact = $this->callAPISuccess('Contact', 'create', array('first_name' => 'Wonder', 'last_name' => 'Woman', 'contact_type' => 'Individual'));
-    $this->contacts[] = $contact['id'];
+    $this->enableAllComponents();
+    $contacts = $this->createContacts();
+    $this->contacts[] = reset($contacts)['id'];
   }
 
   public function tearDown() {
@@ -52,32 +47,104 @@ class ContributionDetailExtendedTest extends BaseTestClass implements HeadlessIn
    * Test the ContributionDetailExtended report with order by.
    */
   public function testContributionExtendedReport() {
-    $this->callAPISuccess('Order', 'create', array('contact_id' => $this->contacts[0], 'total_amount' => 5, 'financial_type_id' => 2));
+    $this->setupData();
     $params = array(
       'report_id' => 'contribution/detailextended',
       'fields' => array (
         'civicrm_contact_display_name' => '1',
+        'contribution_currency' => '1',
       ),
       'order_bys' => array(
-        1 => array(
-          'column' => 'contribution_financial_type_id',
-          'order' => 'ASC',
-        ),
+        1 => ['column' => 'contribution_financial_type_id', 'order' => 'ASC'],
+        2 => ['column' => 'contribution_total_amount', 'order' => 'DESC'],
       ),
     );
     $rows = $this->getRows($params);
-    $this->assertEquals('USD', $rows[0]['civicrm_contribution_currency']);
+    $this->assertEquals('USD', $rows[0]['civicrm_contribution_contribution_currency']);
   }
 
-  /**
-   * @param $params
-   * @return array|int
-   */
-  protected function getRows($params) {
-    $params['options']['metadata'] = array('title', 'label', 'sql');
-    $rows = $this->callAPISuccess('ReportTemplate', 'getrows', $params);
-    $rows = $rows['values'];
-    return $rows;
+  public function testDetailExtendedGroupByContact() {
+    $this->setupData();
+    $params = [
+      'report_id' => 'contribution/detailextended',
+      'fields' => [
+        'civicrm_contact_display_name' => '1',
+        'civicrm_contact_contact_id' => '1',
+        'contribution_id' => '1',
+        'contribution_receive_date' => '1',
+        'contribution_total_amount' => '1',
+        'id' => '1',
+      ],
+      'group_bys' =>['civicrm_contact_contact_id' => '1'],
+      'order_bys' => [['column' => '-'],
+      ],
+    ];
+    $this->getRows($params);
+  }
+
+  protected function setupData() {
+    $this->callAPISuccess('Order', 'create', [
+      'contact_id' => $this->contacts[0],
+      'total_amount' => 5,
+      'financial_type_id' => 2
+    ]);
+  }
+
+  public function testReportWithMoreThanTwentyFiveContributions() {
+    $this->createMoreThanTwentyFiveContributions();
+    $params = [
+      'report_id' => 'contribution/detailextended',
+      'fields' => [
+        'civicrm_contact_display_name' => '1',
+        'civicrm_contact_contact_id' => '1',
+        'contribution_id' => '1',
+        'contribution_receive_date' => '1',
+        'contribution_total_amount' => '1',
+        'id' => '1',
+      ],
+      'group_bys' => [
+        'contribution_id' => '1',
+      ],
+    ];
+    $rows = $this->getRows($params);
+    $this->assertEquals(61, count($rows));
+    $rollupRow = $rows[60];
+    $this->assertEquals('', $rollupRow['civicrm_contact_civicrm_contact_display_name']);
+    unset($rows[60]);
+    $total = 0;
+    foreach ($rows as $row) {
+      $total += $row['civicrm_contribution_contribution_total_amount_sum'];
+    }
+    $this->assertEquals(9150, $total);
+    $stats = $this->callAPISuccess('ReportTemplate', 'getstatistics', $params)['values'];
+    $this->assertEquals('$ 9,150.00 (60)', $stats['counts']['amount']['value']);
+  }
+
+  public function createMoreThanTwentyFiveContributions() {
+    $amount = 5;
+    $contactData = array_merge(
+      $this->getContactData('Organization', 10),
+      $this->getContactData('Individual', 10),
+      $this->getContactData('Household', 10)
+    );
+    foreach ($contactData as $contactParams) {
+      $contact = $this->callAPISuccess('Contact', 'create', $contactParams);
+      $this->callAPISuccess('Contribution', 'create', [
+        'contact_id' => $contact['id'],
+        'total_amount' => $amount,
+        'financial_type_id' => 'Donation',
+        'receive_date' => '2018-12-09',
+      ]);
+      $this->contacts[] = $contact;
+      $amount = $amount + 5;
+      $this->callAPISuccess('Contribution', 'create', [
+        'contact_id' => $contact['id'],
+        'total_amount' => $amount,
+        'financial_type_id' => 'Donation',
+        'receive_date' => '2018-11-09',
+      ]);
+      $amount = $amount + 5;
+    }
   }
 
 }

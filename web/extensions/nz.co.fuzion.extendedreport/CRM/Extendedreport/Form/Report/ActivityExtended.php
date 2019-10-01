@@ -4,37 +4,25 @@
  * Class CRM_Extendedreport_Form_Report_ActivityExtended
  */
 class CRM_Extendedreport_Form_Report_ActivityExtended extends CRM_Extendedreport_Form_Report_ExtendedReport {
-  //todo move def to getActivityColumns
+
+  protected $_customGroupExtends = ['Activity', 'Contact', 'Individual', 'Household', 'Organization'];
+
+  protected $_editableFields = FALSE;
+
   /**
-   * @var array
-   */
-  protected $_customGroupExtended = array(
-    'civicrm_activity' => array(
-      'extends' => array('Activity'),
-      'title' => 'Activity',
-      'filters' => TRUE,
-    ),
-  );
-  /**
+   * Can this report be used on a contact tab.
+   *
+   * The report must support contact_id in the url for this to work.
+   *
    * @var bool
    */
-  protected $_addressField = FALSE;
-  /**
-   * @var bool
-   */
-  protected $_emailField = FALSE;
-  /**
-   * @var null
-   */
-  protected $_summary = NULL;
+  protected $isSupportsContactTab = TRUE;
+
   /**
    * @var bool
    */
   protected $_exposeContactID = FALSE;
-  /**
-   * @var bool
-   */
-  protected $_customGroupGroupBy = FALSE;
+
   /**
    * @var string
    */
@@ -42,8 +30,6 @@ class CRM_Extendedreport_Form_Report_ActivityExtended extends CRM_Extendedreport
 
   /**
    * Class constructor.
-   *
-   * @todo allow filtering on other contacts
    */
   public function __construct() {
     $this->_columns = $this->getColumns(
@@ -109,8 +95,6 @@ class CRM_Extendedreport_Form_Report_ActivityExtended extends CRM_Extendedreport
         AND civicrm_email_assignee.is_deleted = 0
         ";
     }
-    $this->addAddressFromClause();
-    $this->selectableCustomDataFrom();
   }
 
   /**

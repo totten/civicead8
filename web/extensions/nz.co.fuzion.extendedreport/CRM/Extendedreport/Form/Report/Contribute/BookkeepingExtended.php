@@ -64,25 +64,23 @@ class CRM_Extendedreport_Form_Report_Contribute_BookkeepingExtended extends CRM_
     +  $this->getColumns('FinancialTrxn', array(
       'filters_defaults' => array('status_id' => array('IN' => array(1)),
     )))
-    + array(
-      'civicrm_entity_financial_trxn' => array(
-        'dao' => 'CRM_Financial_DAO_EntityFinancialTrxn',
-        'fields' => array(
+    + $this->buildColumns(
+      [
           'amount' => array(
             'title' => ts('Amount'),
             'default' => TRUE,
-            'type' => CRM_Utils_Type::T_STRING,
-            'statistics' => array('sum'),
-          ),
-        ),
-        'filters' => array(
-          'amount' => array(
-            'title' => ts('Amount'),
             'type' => CRM_Utils_Type::T_MONEY,
+            'operatorType' => CRM_Report_Form::OP_FLOAT,
+            'statistics' => ['sum' => ts('Total amount')],
+            'is_fields' => TRUE,
+            'is_filters' => TRUE,
+            'is_group_bys' => FALSE,
+            'is_order_bys' => FALSE,
+            'is_join_filters' => FALSE,
+            'table_name' => 'civicrm_entity_financial_trxn',
           ),
-        ),
-      ),
-    ) + $this->getColumns('Batch', array(
+      ], 'civicrm_entity_financial_trxn', 'CRM_Financial_DAO_EntityFinancialTrxn')
+     + $this->getColumns('Batch', array(
       'group_by' => TRUE,
       'prefix_label' => ts('Batch '),
       'filters' => TRUE,
@@ -91,6 +89,7 @@ class CRM_Extendedreport_Form_Report_Contribute_BookkeepingExtended extends CRM_
     $this->_groupFilter = TRUE;
     $this->_tagFilter = TRUE;
     parent::__construct();
+    CRM_Core_DAO::disableFullGroupByMode();
 
   }
 
@@ -342,10 +341,10 @@ class CRM_Extendedreport_Form_Report_Contribute_BookkeepingExtended extends CRM_
     $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value('title', $field);
     $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value('type', $field);
     $this->_columnHeaders["{$tableName}_{$fieldName}"]['dbAlias'] = CRM_Utils_Array::value('dbAlias', $field);
-    $this->_selectAliases[] = $alias;
+    $this->_selectAliases[$alias] = $alias;
   }
 
-  public function groupBy() {
+  public function storeGroupByArray() {
     parent::storeGroupByArray();
     if (empty($this->_groupByArray)) {
       $this->_groupByArray = array(
@@ -354,7 +353,6 @@ class CRM_Extendedreport_Form_Report_Contribute_BookkeepingExtended extends CRM_
       );
       $this->_rollup = FALSE;
     }
-    parent::groupBy();
   }
 
 }
