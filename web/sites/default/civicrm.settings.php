@@ -13,6 +13,8 @@ if (defined('PANTHEON_ENVIRONMENT')) {
 // Drupal Root Info
   $pantheon_conf = $pressflow_settings->conf;
   $pantheon_root_dir = "/srv/bindings/" . $pantheon_conf->pantheon_binding;
+  $webRoot = $pantheon_root_dir . '/code/web/';
+  $publicFileDir =   $webRoot . $pantheon_conf->file_directory_path;
 
   // DB Info
   $pantheon_db = $pressflow_settings->databases->default->default;
@@ -219,7 +221,7 @@ global $civicrm_root;
 // $civicrm_root = '/app/vendor/civicrm/civicrm-core';
 $civicrm_root = $pantheon_root_dir . "/code/vendor/civicrm/civicrm-core";
 if (!defined('CIVICRM_TEMPLATE_COMPILEDIR')) {
-  define('CIVICRM_TEMPLATE_COMPILEDIR', $pantheon_root_dir . '/code/web/sites/default/files/civicrm/templates_c/');
+  define('CIVICRM_TEMPLATE_COMPILEDIR', $webRoot . $pantheon_conf->file_directory_path . '/civicrm/templates_c/');
   // define( 'CIVICRM_TEMPLATE_COMPILEDIR', '/app/web/sites/default/files/civicrm/templates_c/');
 }
 
@@ -289,16 +291,16 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  $civicrm_setting['Directory Preferences']['uploadDir'] = $pantheon_conf->file_temporary_path;
 
  // Override the custom files upload directory.
- $civicrm_setting['Directory Preferences']['customFileUploadDir'] = $pantheon_conf->file_temporary_path . '/custom';
+ $civicrm_setting['Directory Preferences']['customFileUploadDir'] = $publicFileDir . '/custom';
 
  // Override the images directory.
- $civicrm_setting['Directory Preferences']['imageUploadDir'] = $pantheon_conf->file_temporary_path . '/persist/contribute' ;
+ $civicrm_setting['Directory Preferences']['imageUploadDir'] = $publicFileDir . '/persist/contribute' ;
 
  // Override the custom templates directory.
- $civicrm_setting['Directory Preferences']['customTemplateDir'] = $pantheon_conf->file_temporary_path . '/custom_tpl_47';
+ $civicrm_setting['Directory Preferences']['customTemplateDir'] = $publicFileDir . '/custom_tpl_47';
 
  // Override the Custom php path directory.
- $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $pantheon_conf->file_temporary_path . '/custom_php';
+ $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $publicFileDir . '/custom_php';
 
  // Override the extensions directory.
  $civicrm_setting['Directory Preferences']['extensionsDir'] = $pantheon_root_dir . '/code/web/extensions';
@@ -325,7 +327,7 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  // $civicrm_setting['CiviCRM Preferences']['logging_no_trigger_permission'] = 1;
 
  // Override the CMS root path defined by cmsRootPath.
- define('CIVICRM_CMSDIR', $pantheon_root_dir . '/code/web');
+ define('CIVICRM_CMSDIR', $webRoot);
 
  // Opt-out of announcements by the CiviCRM core team for releases, paid services, events, etc. Separate each preferred optout category with a comma:
  //   "offers": paid service offers
