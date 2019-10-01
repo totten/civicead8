@@ -224,19 +224,19 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  $civicrm_setting['Directory Preferences']['uploadDir'] = $pantheon_conf->file_temporary_path;
 
  // Override the custom files upload directory.
- $civicrm_setting['Directory Preferences']['customFileUploadDir'] = $fileRoot . '/civicrm/custom/';
+ $civicrm_setting['Directory Preferences']['customFileUploadDir'] = $fileRoot . '/civicrm/custom';
 
  // Override the images directory.
- $civicrm_setting['Directory Preferences']['imageUploadDir'] = $fileRoot . '/civicrm/persist/contribute/' ;
+ $civicrm_setting['Directory Preferences']['imageUploadDir'] = $fileRoot . '/civicrm/persist/contribute' ;
 
  // Override the custom templates directory.
- $civicrm_setting['Directory Preferences']['customTemplateDir'] = $fileRoot . '/civicrm/custom_tpl_47/';
+ $civicrm_setting['Directory Preferences']['customTemplateDir'] = $fileRoot . '/civicrm/custom_tpl_47';
 
  // Override the Custom php path directory.
- $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $fileRoot . '/civicrm/custom_php/';
+ $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $fileRoot . '/civicrm/custom_php';
 
  // Override the extensions directory.
- $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . 'extensions/';
+ $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . '/extensions';
 
  // Override the resource url
  // $civicrm_setting['URL Preferences']['userFrameworkResourceURL'] = 'http://example.com/example-resource-url/';
