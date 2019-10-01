@@ -9,7 +9,7 @@
 if (defined('PANTHEON_ENVIRONMENT')) {
   // Extract Pressflow settings into a php object.
   $pressflow_settings = json_decode($_SERVER['PRESSFLOW_SETTINGS']);
-  //var_dump($pressflow_settings);
+  var_dump($pressflow_settings);
 // Drupal Root Info
   $pantheon_conf = $pressflow_settings->conf;
   $pantheon_root_dir = "/srv/bindings/" . $pantheon_conf->pantheon_binding;

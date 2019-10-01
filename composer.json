@@ -22,7 +22,7 @@
     "require": {
         "php": ">=7.0.8",
         "civicrm/civicrm-core": "5.14.0",
-        "civicrm/civicrm-drupal-8": "5.14",
+        "civicrm/civicrm-drupal-8": "5.14.0",
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "^1.6.5",
         "drupal-composer/drupal-scaffold": "^2.5",
