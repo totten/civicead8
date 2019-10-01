@@ -9,7 +9,7 @@
 $siteName = '-civicead8.pantheonsite.io';
 
 // This assumes https.
-$pantheonDomain = '//' . $_ENV['PANTHEON_ENVIRONMENT'] . $siteName;
+$pantheonDomain = 'https://' . $_ENV['PANTHEON_ENVIRONMENT'] . $siteName;
 
 // All Pantheon Environments.
 if (defined('PANTHEON_ENVIRONMENT')) {
@@ -239,7 +239,7 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . '/extensions';
 
  // Override the resource url
- // $civicrm_setting['URL Preferences']['userFrameworkResourceURL'] = 'http://example.com/example-resource-url/';
+ $civicrm_setting['URL Preferences']['userFrameworkResourceURL'] = '[cms.root]/libraries/civicrm';
 
  // Override the Image Upload URL (System Settings > Resource URLs)
  // $civicrm_setting['URL Preferences']['imageUploadURL'] = 'http://example.com/example-image-upload-url';
@@ -248,7 +248,7 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  // $civicrm_setting['URL Preferences']['customCSSURL'] = 'http://example.com/example-css-url' ;
 
  // Override the extensions resource URL
- // $civicrm_setting['URL Preferences']['extensionsURL'] = 'http://example.com/pathtoextensiondir'
+ $civicrm_setting['URL Preferences']['extensionsURL'] = $pantheonDomain . '/extensions';
 
  // Disable display of Community Messages on home dashboard
  // $civicrm_setting['CiviCRM Preferences']['communityMessagesUrl'] = false;

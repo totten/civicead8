@@ -9,6 +9,7 @@ module:
   block_content: 0
   breakpoint: 0
   civicrm: 0
+  civicrm_entity: 0
   civicrm_views: 0
   civicrmtheme: 0
   ckeditor: 0
@@ -74,6 +75,7 @@ module:
   quickedit: 0
   rdf: 0
   realname: 0
+  redis: 0
   responsive_bg_image_formatter: 0
   responsive_image: 0
   search: 0
