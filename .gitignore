@@ -12,7 +12,7 @@
 # Ignore Drupal's file directory
 web/sites/default/files
 
-# un-ignore vendor/civicrm/civicrm-core/packages
+# un-ignore section
 !vendor/civicrm/civicrm-core/packages
 !vendor/civicrm/civicrm-core/bower_components
 

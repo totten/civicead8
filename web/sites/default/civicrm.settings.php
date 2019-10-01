@@ -236,7 +236,7 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $fileRoot . '/civicrm/custom_php';
 
  // Override the extensions directory.
- //$civicrm_setting['Directory Preferences']['extensionsDir'] =   $fileRoot . '/civicrm/extensions';
+ $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . '/extensions';
 
  // Override the resource url
  // $civicrm_setting['URL Preferences']['userFrameworkResourceURL'] = 'http://example.com/example-resource-url/';
