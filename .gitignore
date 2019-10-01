@@ -14,6 +14,8 @@ web/sites/default/files
 
 # un-ignore vendor/civicrm/civicrm-core/packages
 !vendor/civicrm/civicrm-core/packages
+!vendor/civicrm/civicrm-core/bower_components
+
 
 # Pantheon commits a settings.php for environment-specific settings.
 # Place local settings in settings.local.php
