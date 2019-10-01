@@ -4,6 +4,7 @@ namespace Drupal\civicrm\Routing;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Drupal\civicrm\CivicrmHelper;
 
 /**
  * Contains all dynamic routes.
@@ -21,7 +22,6 @@ class Routes {
 
     // Initialize CiviCRM.
     \Drupal::service('civicrm')->initialize();
-    $d8System = \CRM_Core_Config::singleton()->userSystem;
 
     $items = \CRM_Core_Menu::items();
 
@@ -41,7 +41,7 @@ class Routes {
           'extra' => '.+',
         ]
       );
-      $route_name = $d8System->parseUrl($path)['route_name'];
+      $route_name = CivicrmHelper::parseURL($path)['route_name'];
       $collection->add($route_name, $route);
     }
 

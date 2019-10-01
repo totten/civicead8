@@ -788,24 +788,24 @@
     },
     {
         "name": "civicrm/civicrm-drupal-8",
-        "version": "5.17.5",
-        "version_normalized": "5.17.5.0",
+        "version": "5.14.0",
+        "version_normalized": "5.14.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/civicrm/civicrm-drupal-8.git",
-            "reference": "1f3324176cf1254747aef6c931ecdf2dbab8881d"
+            "reference": "41c855b8bdf15cef9b5578622e53d90b4510b317"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/civicrm/civicrm-drupal-8/zipball/1f3324176cf1254747aef6c931ecdf2dbab8881d",
-            "reference": "1f3324176cf1254747aef6c931ecdf2dbab8881d",
+            "url": "https://api.github.com/repos/civicrm/civicrm-drupal-8/zipball/41c855b8bdf15cef9b5578622e53d90b4510b317",
+            "reference": "41c855b8bdf15cef9b5578622e53d90b4510b317",
             "shasum": ""
         },
         "require": {
             "civicrm/civicrm-core": ">=5.4.0",
             "composer/installers": "^1.0"
         },
-        "time": "2019-08-23T01:22:38+00:00",
+        "time": "2019-03-22T14:31:11+00:00",
         "type": "drupal-module",
         "extra": {
             "installer-name": "civicrm"
