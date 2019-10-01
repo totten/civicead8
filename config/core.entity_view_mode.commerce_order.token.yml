@@ -1,0 +1,10 @@
+uuid: 2d3c3e25-b420-4797-b29b-69c1d6ff7ba4
+langcode: en
+status: true
+dependencies:
+  module:
+    - commerce_order
+id: commerce_order.token
+label: Token
+targetEntityType: commerce_order
+cache: true

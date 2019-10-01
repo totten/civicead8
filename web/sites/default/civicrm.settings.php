@@ -9,7 +9,7 @@
 if (defined('PANTHEON_ENVIRONMENT')) {
   // Extract Pressflow settings into a php object.
   $pressflow_settings = json_decode($_SERVER['PRESSFLOW_SETTINGS']);
-  var_dump($pressflow_settings);
+  // var_dump($pressflow_settings);
 // Drupal Root Info
   $pantheon_conf = $pressflow_settings->conf;
   $pantheon_root_dir = "/srv/bindings/" . $pantheon_conf->pantheon_binding;
@@ -303,7 +303,7 @@ if (!defined('CIVICRM_UF_BASEURL')) {
  $civicrm_setting['Directory Preferences']['customPHPPathDir'] = $publicFileDir . '/custom_php';
 
  // Override the extensions directory.
- $civicrm_setting['Directory Preferences']['extensionsDir'] = $pantheon_root_dir . '/code/web/extensions';
+ $civicrm_setting['Directory Preferences']['extensionsDir'] =   $webRoot . 'extensions';
 
  // Override the resource url
  // $civicrm_setting['URL Preferences']['userFrameworkResourceURL'] = 'http://example.com/example-resource-url/';
