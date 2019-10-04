@@ -1,3 +1,0 @@
-vendor
-features/failures/*
-!features/failures/.gitkeep

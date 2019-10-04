@@ -157,6 +157,11 @@ class Handler {
    * Runs bower in civicrm-core/civicrm.
    */
   public function runBower() {
+    $bowerJson = $this->getCivicrmCorePath() . DIRECTORY_SEPARATOR . 'bower.json';
+    if (!file_exists($bowerJson)) {
+      return;
+    }
+
     $this->output("<info>Running bower for CiviCRM...</info>");
 
     $bower = new Process("bower install", $this->getCivicrmCorePath());
